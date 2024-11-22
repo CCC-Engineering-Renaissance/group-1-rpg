@@ -6,7 +6,7 @@
 #include <chrono> // timer
 #include <ctime>
 #include <cstdlib>
-#include <thread>   // run to different things at the same time
+#include <thread> // run to different things at the same time
 
 using namespace std;
 
@@ -17,8 +17,10 @@ vector<int> characterPosition = {25, 25};
 vector<int> characterLastPosition = {25, 25};
 vector<int> enemyPosition = {25, 2};
 vector<int> enemyLastPosition = {25, 2};
-
+bool touching = false;
+int chickens = 0;
 // Map declaration
+
 vector<string> world = {
     // width 124 height 30
     "****************************************************************************************************************************", // y = 0
@@ -53,7 +55,7 @@ vector<string> world = {
     "*                                                                                                                          *",
     "****************************************************************************************************************************",
     "*                                                                                                                          *",
-    "*   Chicken count: 1234                                                                                                    *",
+    "*   Chicken count: ",to_string(chickens), "                                                                                                       *",
     "*                                                                                                                          *",
     "****************************************************************************************************************************",
 
@@ -62,15 +64,19 @@ vector<string> world = {
 
 void printMap()
 {
+  string map;
   for (int i = 0; i < world.size(); i++)
   {
-    cout << world.at(i);
-    cout << endl;
-    // if (i != world.size() - 1)
-    // {
-    //   cout << endl;
-    // }
+
+    if(i == 33 || i == 32){
+    map = map + world.at(i);
+    }
+    else {
+    map = map + world.at(i) +  "\n";
+
+    }
   }
+  cout << map << endl;
 };
 void updatePosition(vector<int> &position)
 { // position [x , y]
@@ -202,7 +208,26 @@ void enemyMovement()
   {
     enemyChangePosition();
     this_thread::sleep_for(chrono::milliseconds(200));
+    if(touching){
+      chickens = chickens + 1;
+      world[33] = to_string(chickens);
+      touching = false;
+        // thread enemyM2(enemyMovement);
+        // thread check2(checking);
+    return;
   }
+
+  }
+}
+void checking(){
+  while (true)
+  {
+    if(enemyPosition[0] == characterPosition[0] && enemyPosition[1] == characterPosition[1]){
+    touching = true;
+    return;
+    }
+  }
+  
 }
 
 int main()
@@ -214,34 +239,47 @@ int main()
   // updatePosition(characterPosition);
   // printMap();
 
-  // This is where a)ll your logic will go
   // thread enemyM(enemyMovement);
+  thread enemyM(enemyMovement);
+  thread check(checking);
 
   while (true)
   {
 
-    // int input = toupper(quick_read());
+    // cin.ignore();
+    // this_thread::sleep_for(chrono::milliseconds(166));
+    // cin.ignore();
     set_raw_mode(true);
     int input = quick_read();
     if (input == 'q')
       return 0;
     if (input == 'w')
+    {
       characterPosition[1]--;
-    updatePosition(characterPosition);
+      updatePosition(characterPosition);
+    }
     if (input == 's')
+    {
       characterPosition[1]++;
-    updatePosition(characterPosition);
+      updatePosition(characterPosition);
+    }
     if (input == 'a')
+    {
       characterPosition[0]--;
-    updatePosition(characterPosition);
+      updatePosition(characterPosition);
+    }
     if (input == 'd')
+    {
       characterPosition[0]++;
-    updatePosition(characterPosition);
+      updatePosition(characterPosition);
+    }
     // cout << characterPosition[0] << "-" << characterPosition[1] << endl;
-
 
   }
   // Wait for both threads to finish
-  // enemyM.join();
+  enemyM.join();
+
+
 }
+
 // Collect chickens, your name is Randle

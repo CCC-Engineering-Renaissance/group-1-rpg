@@ -19,6 +19,7 @@ vector<int> enemyPosition = {25, 2};
 vector<int> enemyLastPosition = {25, 2};
 bool touching = false;
 int chickens = 0;
+int lvl = 0;
 // Map declaration
 
 vector<string> world = {
@@ -81,7 +82,7 @@ void printMap()
 void updatePosition(vector<int> &position)
 { // position [x , y]
   bool ret = true;
-  if (characterPosition[0] >= 124)
+  if (characterPosition[0] >= 123)
   {
     characterPosition[0]--;
     ret = false;
@@ -207,7 +208,7 @@ void enemyMovement()
   while (true)
   {
     enemyChangePosition();
-    this_thread::sleep_for(chrono::milliseconds(200));
+    this_thread::sleep_for(chrono::milliseconds(lvl));
     if(touching){
       chickens = chickens + 1;
       world[33] = to_string(chickens);
@@ -233,6 +234,19 @@ void checking(){
 int main()
 {
   // vector <vector<map>> char; // You can use a 2D vector if you'd like, but it's a lot better to emulate a 2D vector with a 1D one.
+  cout << "Select your level (Easy: 1, Normal: 2, Hard: 3)" << endl;
+  cin >> lvl;
+  if(lvl == 1){
+    lvl = 1000;
+
+  }
+  else if(lvl == 2){
+    lvl = 200;
+
+  }else {
+    lvl = 150;
+  }
+
   printMap();
   updatePosition(characterPosition);
   // printMap();
@@ -242,7 +256,6 @@ int main()
   // thread enemyM(enemyMovement);
   thread enemyM(enemyMovement);
   thread check(checking);
-
   while (true)
   {
 
